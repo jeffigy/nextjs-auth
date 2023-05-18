@@ -1,4 +1,5 @@
-import { getSession } from "next-auth/react";
+import { sign } from "crypto";
+import { getSession, signIn } from "next-auth/react";
 import React from "react";
 
 type blogProps = {
@@ -17,6 +18,14 @@ export default blog;
 
 export async function getServerSideProps(context: any) {
   const session = await getSession(context);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/api/auth/signin?callbackUrl=http://localhost:3000/blog",
+        permanent: false,
+      },
+    };
+  }
   return {
     props: {
       data: session
